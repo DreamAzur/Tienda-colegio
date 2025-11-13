@@ -137,15 +137,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('checkout-form').addEventListener('submit', (e) => {
     e.preventDefault();
+    const statusEl = document.getElementById('checkout-status');
+    const submitBtn = document.querySelector('#checkout-form button[type="submit"]');
+    if (statusEl) statusEl.textContent = '';
+    if (submitBtn) submitBtn.disabled = true;
     const cart = loadCartLocal();
     if (!cart || cart.length === 0) { alert('No hay items en el carrito.'); return; }
   const name = document.getElementById('cust-name').value.trim();
-  const email = document.getElementById('cust-email') ? document.getElementById('cust-email').value.trim() : '';
+  const emailEl = document.getElementById('cust-email');
+  const email = emailEl ? emailEl.value.trim() : '';
   const phone = document.getElementById('cust-phone').value.trim();
   const address = document.getElementById('cust-address').value.trim();
   const commentEl = document.getElementById('cust-comment');
   const comment = commentEl ? commentEl.value.trim() : '';
-    if (!name || !email) { alert('Por favor ingresa nombre y email.'); return; }
+    // Validación básica de nombre y email antes de intentar el envío a Formspree
+    if (!name || !email) {
+      if (statusEl) statusEl.textContent = 'Por favor ingresa nombre y email.';
+      if (submitBtn) submitBtn.disabled = false;
+      return;
+    }
+    // Validar formato de email usando la validación nativa del input (si existe)
+    if (emailEl && typeof emailEl.checkValidity === 'function' && !emailEl.checkValidity()) {
+      if (statusEl) statusEl.textContent = 'Por favor ingresa un email válido.';
+      if (emailEl.reportValidity) emailEl.reportValidity();
+      if (submitBtn) submitBtn.disabled = false;
+      return;
+    }
 
     const order = {
       customer: { name, email, phone, address, comment },
@@ -153,11 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Envío simplificado: usar POST nativo (formulario) a Formspree para evitar problemas de CORS/fetch.
-      const statusEl = document.getElementById('checkout-status');
-      const submitBtn = document.querySelector('#checkout-form button[type="submit"]');
-      if (statusEl) statusEl.textContent = '';
-      if (submitBtn) submitBtn.disabled = true;
-
       const endpoint = (window.GAMMS_CONFIG && window.GAMMS_CONFIG.FORMSPREE_ENDPOINT) || '';
       if (endpoint) {
         // Usar fetch para evitar bloqueadores de pop-ups y problemas CORS.
