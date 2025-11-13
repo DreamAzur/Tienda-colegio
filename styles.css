@@ -866,7 +866,12 @@ footer {
     padding-left: 12px;
   }
   .site-header .site-title { text-align: left; }
-  .header-actions { justify-self: end; display: flex; gap: 8px; }
+  /* Make the menu button flow naturally (not absolute) to avoid overlap */
+  .menu-toggle { position: relative; left: auto; top: auto; transform: none; align-self: flex-start; margin: 0; z-index: 60; }
+  /* Stack ordering: title first, then menu, then actions */
+  .site-header .site-title { order: 1; }
+  #menu-toggle { order: 0; }
+  .header-actions { order: 2; justify-content: flex-end; display: flex; gap: 8px; width: 100%; }
 
   /* Reduce banner elements for small screens */
   .banner-inner { align-items: center; gap: 10px; }
