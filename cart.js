@@ -5,14 +5,12 @@ function loadCartLocal() {
     const raw = localStorage.getItem('gamms_cart');
     return raw ? JSON.parse(raw) : [];
   } catch (e) {
-    console.error('Error leyendo localStorage', e);
+    // error leyendo localStorage (silenciado)
     return [];
   }
 }
 
-// Opcional: si tienes Formspree, coloca tu endpoint aquí
-// Ejemplo: const FORMSPREE_ENDPOINT = 'https://formspree.io/f/abcd1234';
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mldadbww';
+// El endpoint de Formspree se obtiene desde `window.GAMMS_CONFIG.FORMSPREE_ENDPOINT`
 
 function saveCartLocal(cart) {
   try {
@@ -20,7 +18,7 @@ function saveCartLocal(cart) {
     // actualizar badge si existe
     updateCartBadge(cart);
   } catch (e) {
-    console.error('Error guardando localStorage', e);
+    // error guardando localStorage (silenciado)
   }
 }
 
@@ -160,11 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (statusEl) statusEl.textContent = '';
       if (submitBtn) submitBtn.disabled = true;
 
-      if (FORMSPREE_ENDPOINT) {
+      const endpoint = (window.GAMMS_CONFIG && window.GAMMS_CONFIG.FORMSPREE_ENDPOINT) || '';
+      if (endpoint) {
         // Usar fetch para evitar bloqueadores de pop-ups y problemas CORS.
         // submitOrderViaFormspree ahora devuelve una Promise<boolean>.
         if (statusEl) statusEl.textContent = 'Enviando pedido...';
-        submitOrderViaFormspree(order).then((result) => {
+        submitOrderViaFormspree(order, endpoint).then((result) => {
           // result: { ok: boolean, status: number, body: string }
           if (result && result.ok) {
             if (statusEl) statusEl.textContent = 'Pedido enviado correctamente. Revisa la bandeja configurada en Formspree.';
@@ -207,8 +206,8 @@ function sendOrderViaMailto(order) {
 }
 
 // Fallback: enviar el pedido creando un formulario y enviándolo (abre nueva pestaña).
-async function submitOrderViaFormspree(order) {
-  if (!FORMSPREE_ENDPOINT) return false;
+async function submitOrderViaFormspree(order, endpoint) {
+  if (!endpoint) return { ok: false, status: 0, body: 'no-endpoint' };
   try {
     const payload = {
       Nombre: order.customer.name,
@@ -223,7 +222,7 @@ async function submitOrderViaFormspree(order) {
 
     // Intento 1: enviar JSON
     try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -246,7 +245,7 @@ async function submitOrderViaFormspree(order) {
     try {
       const params = new URLSearchParams();
       Object.keys(payload).forEach((k) => { params.append(k, payload[k]); });
-      const res2 = await fetch(FORMSPREE_ENDPOINT, {
+      const res2 = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params.toString()
@@ -259,7 +258,6 @@ async function submitOrderViaFormspree(order) {
       return { ok: false, status: 0, body: 'network-error' };
     }
   } catch (e) {
-    console.error('submitOrderViaFormspree error:', e);
-    return false;
+    return { ok: false, status: 0, body: 'exception' };
   }
 }

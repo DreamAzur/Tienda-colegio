@@ -138,6 +138,7 @@
 
   <!-- Modal carrito (SPA) -->
   <!-- Modal de carrito eliminado: se usa ahora la página dedicada cart.html -->
+  <script src="config.js"></script>
   <script src="app.js"></script>
   <script>
     // Banner logo fallback: si la imagen no carga, sustituir por un SVG placeholder
@@ -153,7 +154,7 @@
         if (img.complete && img.naturalWidth === 0) {
           img.dispatchEvent(new Event('error'));
         }
-      } catch(e){ console.warn(e); }
+      } catch(e){ /* banner fallback error silenciado */ }
     })();
   </script>
     <!-- Inline products data: evita problemas con fetch cuando se abre con file:// -->

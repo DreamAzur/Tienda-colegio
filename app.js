@@ -8,7 +8,7 @@ function loadCart() {
     const raw = localStorage.getItem('gamms_cart');
     if (raw) cart = JSON.parse(raw);
   } catch (e) {
-    console.error('Error leyendo localStorage', e);
+    // error leyendo localStorage (silenciado en producción)
     cart = [];
   }
 }
@@ -17,7 +17,7 @@ function saveCart() {
   try {
     localStorage.setItem('gamms_cart', JSON.stringify(cart));
   } catch (e) {
-    console.error('Error guardando localStorage', e);
+    // error guardando localStorage (silenciado)
   }
 }
 
@@ -46,7 +46,7 @@ async function loadProducts() {
       return;
     }
   } catch (e) {
-    console.warn('Error leyendo products-data inline:', e);
+    // fallo al leer products-data inline (silenciado)
   }
 
   // Si no hay inline, intentar fetch normal
@@ -56,17 +56,16 @@ async function loadProducts() {
       products = await res.json();
       return;
     }
-    console.warn('Fetch products.json devolvió estado:', res.status);
+    // fetch products.json devolvió estado no OK
   } catch (e) {
-    console.warn('No se pudo cargar products.json, usando fallback', e);
+    // no se pudo cargar products.json, usando fallback
   }
 
   products = defaultProducts;
 }
 
-// --- Configuración opcional: si tienes un endpoint de Formspree, ponlo aquí ---
-// Ejemplo: const FORMSPREE_ENDPOINT = 'https://formspree.io/f/abcd1234';
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mldadbww';
+// --- Configuración global: el endpoint de Formspree se define en `config.js` como
+// `window.GAMMS_CONFIG.FORMSPREE_ENDPOINT`.
 
 function renderProducts() {
   const container = document.getElementById('product-list');
@@ -129,7 +128,7 @@ function renderProducts() {
       const mainImgEl = div.querySelector('img.product-img');
       if (mainImgEl) {
         mainImgEl.addEventListener('error', () => {
-          console.warn('Fallo cargando imagen principal:', mainImg, 'producto id:', p.id);
+          // fallo cargando imagen principal
           mainImgEl.src = MISSING_IMG_PLACEHOLDER;
         });
         // Al hacer click en la imagen principal, abrir lightbox con las imágenes del producto
@@ -159,7 +158,7 @@ function renderProducts() {
           t.addEventListener('keydown', (e) => { if (e.key === 'Enter') openLightboxWithImages(p.images, i); });
           // handler para detectar thumbs rotas
           t.addEventListener('error', () => {
-            console.warn('Fallo cargando miniatura:', src, 'producto id:', p.id);
+            // fallo cargando miniatura
             t.src = MISSING_IMG_PLACEHOLDER;
           });
           thumbRow.appendChild(t);
@@ -692,7 +691,7 @@ function setupBackToTop() {
     window.addEventListener('scroll', check, { passive: true });
     // comprobar inicialmente
     setTimeout(check, 120);
-  } catch (e) { console.warn('No se pudo inicializar back-to-top', e); }
+  } catch (e) { /* back-to-top init falló (silenciado) */ }
 }
 
 // --- Carrito modal (SPA) ---
@@ -705,7 +704,7 @@ async function init() {
   (function setupGlobalErrorCapture(){
     try {
       const showErrorOverlay = (msg, url, line, col, error) => {
-        console.error('Captured error:', msg, url, line, col, error);
+        // captured error (overlay will show details)
         // crear overlay si no existe
         if (document.getElementById('error-overlay')) return;
         const ov = document.createElement('div');
@@ -751,12 +750,12 @@ async function init() {
       };
 
       window.addEventListener('error', (ev) => {
-        try { showErrorOverlay(ev.message || 'Error', ev.filename, ev.lineno, ev.colno, ev.error); } catch(e) { console.error(e); }
+        try { showErrorOverlay(ev.message || 'Error', ev.filename, ev.lineno, ev.colno, ev.error); } catch(e) { /* silenciado */ }
       });
       window.addEventListener('unhandledrejection', (ev) => {
-        try { showErrorOverlay(ev.reason && ev.reason.message ? ev.reason.message : String(ev.reason), '', '', '', ev.reason); } catch(e) { console.error(e); }
+        try { showErrorOverlay(ev.reason && ev.reason.message ? ev.reason.message : String(ev.reason), '', '', '', ev.reason); } catch(e) { /* silenciado */ }
       });
-    } catch (e) { console.warn('No se pudo instalar global error capture', e); }
+    } catch (e) { /* no se pudo instalar global error capture (silenciado) */ }
   })();
   loadCart();
   renderCart();
@@ -808,8 +807,7 @@ async function init() {
       };
       ['click', 'pointerdown', 'touchstart'].forEach((ev) => mt.addEventListener(ev, handler, { passive: false }));
       mt.dataset.hasMenuListener = '1';
-      console.log('menu-toggle: listeners attached');
-    } catch (e) { console.warn('ensureMenuToggle error', e); }
+    } catch (e) { /* ensureMenuToggle error silenciado */ }
   })();
 
   // Si la página no tiene nav pero sí el botón, ocultarlo para evitar ver un botón inactivo
