@@ -659,6 +659,42 @@ function setupLightboxControls() {
   if (prevBtn) prevBtn.addEventListener('click', prevImage);
 }
 
+// --- Botón "Subir arriba" (back-to-top) ---
+function setupBackToTop() {
+  try {
+    // crear botón dinámicamente si no existe
+    if (document.getElementById('back-to-top')) return;
+    const btn = document.createElement('button');
+    btn.id = 'back-to-top';
+    btn.setAttribute('aria-label', 'Subir arriba');
+    btn.innerHTML = '↑';
+    btn.className = 'hide';
+    btn.tabIndex = 0;
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
+
+    document.body.appendChild(btn);
+
+    // mostrar/ocultar según scroll
+    const showThreshold = 200;
+    let lastVisible = false;
+    function check() {
+      const should = window.scrollY > showThreshold;
+      if (should && !lastVisible) {
+        btn.classList.remove('hide'); btn.classList.add('visible'); lastVisible = true;
+      } else if (!should && lastVisible) {
+        btn.classList.remove('visible'); btn.classList.add('hide'); lastVisible = false;
+      }
+    }
+    window.addEventListener('scroll', check, { passive: true });
+    // comprobar inicialmente
+    setTimeout(check, 120);
+  } catch (e) { console.warn('No se pudo inicializar back-to-top', e); }
+}
+
 // --- Carrito modal (SPA) ---
 // Carrito modal y checkout en modal eliminados: usamos la página `cart.html` para finalizar compra.
 
@@ -744,6 +780,25 @@ async function init() {
       if (a && siteNav.classList.contains('open')) siteNav.classList.remove('open');
     });
   }
+  // Fallback: algunos móviles o navegadores ignoran ciertos eventos o el listener no se instaló
+  (function ensureMenuToggle() {
+    try {
+      const mt = document.getElementById('menu-toggle');
+      const sn = document.querySelector('.site-nav');
+      if (!mt || !sn) return;
+      if (mt.dataset.hasMenuListener) return; // ya enlazado
+      const handler = (e) => {
+        // prevenir doble activación en touch devices
+        if (e.type === 'touchstart') e.preventDefault();
+        const opening = !sn.classList.contains('open');
+        sn.classList.toggle('open');
+        mt.setAttribute('aria-expanded', String(opening));
+      };
+      ['click', 'pointerdown', 'touchstart'].forEach((ev) => mt.addEventListener(ev, handler, { passive: false }));
+      mt.dataset.hasMenuListener = '1';
+      console.log('menu-toggle: listeners attached');
+    } catch (e) { console.warn('ensureMenuToggle error', e); }
+  })();
 
   // Si la página no tiene nav pero sí el botón, ocultarlo para evitar ver un botón inactivo
   if (menuToggle && !siteNav) {
@@ -759,6 +814,8 @@ async function init() {
   // Construir galería a partir del DOM generado
   buildGalleryFromProducts();
   setupLightboxControls();
+  // botón subir arriba
+  if (typeof setupBackToTop === 'function') setupBackToTop();
   // Forzar navegación al carrito (fallback): siempre redirige a cart.html al hacer clic
   const cartLink = document.getElementById('cart-link');
   if (cartLink) {

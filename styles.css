@@ -896,3 +896,33 @@ footer {
   /* Make catalog single column on very narrow phones */
   #catalog-grid { grid-template-columns: 1fr; }
 }
+
+/* Back-to-top floating button */
+#back-to-top {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg,#f472b6,#fb7185);
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 8px 22px rgba(16,24,40,0.15);
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 180ms ease;
+  z-index: 9999;
+}
+#back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+#back-to-top.hide { opacity: 0; pointer-events: none; transform: translateY(6px); }
+#back-to-top:focus { outline: 3px solid rgba(236,72,153,0.18); }
+
+@media (max-width: 480px) {
+  #back-to-top { width: 40px; height: 40px; font-size: 18px; right: 12px; bottom: 12px; }
+}
