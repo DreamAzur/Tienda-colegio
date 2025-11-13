@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Carrito - GAMMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-title">
+      <h1>GAMMS</h1>
+      <p>Carrito de compras</p>
+    </div>
+    <div class="header-actions">
+      <a href="index.html">← Volver</a>
+      <!-- badge visible en la página del carrito -->
+      <a href="cart.html" id="cart-link" style="margin-left:10px;">🛒 <span id="cart-count" class="cart-badge">0</span></a>
+    </div>
+  </header>
+
+  <main style="max-width:1000px; margin:20px auto;">
+    <section class="card">
+      <h2>Carrito</h2>
+      <div id="cart-area">
+        <p id="cart-empty">Tu carrito está vacío.</p>
+        <ul id="cart-items"></ul>
+        <p class="total">Total: S/ <span id="cart-total">0.00</span></p>
+        <div style="display:flex; gap:8px;">
+          <button id="checkout-btn">Comprar ahora</button>
+          <button id="clear-cart">Vaciar carrito</button>
+        </div>
+        <p id="checkout-message" style="display:none; color:#16a34a;">Gracias por tu compra en GAMMS. Pronto nos pondremos en contacto contigo.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:12px;">
+      <h2>Finalizar compra</h2>
+      <form id="checkout-form">
+        <label for="cust-name">Nombre</label>
+        <input id="cust-name" required />
+        <label for="cust-email">Email</label>
+        <input id="cust-email" type="email" required />
+        <label for="cust-phone">Teléfono</label>
+        <input id="cust-phone" />
+        <label for="cust-address">Dirección</label>
+        <input id="cust-address" />
+        <label for="cust-comment">Comentario</label>
+        <textarea id="cust-comment" placeholder="Escribe aquí algún detalle adicional para tu pedido (ej. instrucciones de entrega, color preferido, talla, etc.)"></textarea>
+        <button type="submit">Enviar pedido</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="cart.js"></script>
+</body>
+</html>

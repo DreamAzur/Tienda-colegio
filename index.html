@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GAMMS - Tienda de Tejidos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  </head>
+<body>
+  <header class="site-header">
+    <div class="site-title">
+      <h1>GAMMS</h1>
+      <p>Tienda de tejidos artesanales – Proyecto escolar</p>
+    </div>
+    <nav class="site-nav" aria-label="Navegación principal">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="conocenos.html">Conócenos</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a href="cart.html" id="cart-link" aria-label="Ver carrito" title="Ver carrito">🛒 <span id="cart-count" class="cart-badge">0</span></a>
+      <div class="header-social">
+        <a href="https://www.instagram.com/gamms_gs/" class="social-icon instagram" title="Instagram - GAMMS" aria-label="Instagram - GAMMS" target="_blank" rel="noopener">📷</a>
+        <a class="instagram-msg" href="https://www.instagram.com/gamms_gs/" target="_blank" rel="noopener">Síguenos en Instagram: <strong>@gamms_gs</strong></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Banner principal: logo + mensaje de bienvenida -->
+    <section class="card banner full-width" role="region" aria-label="Bienvenida">
+      <div class="banner-inner">
+        <img src="img/logo.jpeg" alt="Logo GAMMS" class="banner-logo" onerror="this.style.display='none'" />
+        <div class="banner-text">
+          <p>En GAMMS encontrarás el lugar perfecto para descubrir productos únicos, modernos y de excelente calidad. Somos una tienda online comprometida con ofrecerte lo mejor en cada detalle, combinando estilo, comodidad y precios accesibles.</p>
+          <p>Aquí podrás comprar de forma segura, rápida y sencilla, con la confianza de que cada artículo ha sido seleccionado especialmente para ti. 💫</p>
+        </div>
+      </div>
+    </section>
+    <!-- Catálogo de fotos (miniaturas) -->
+    <section class="card" style="grid-column: 1 / -1;">
+      <h2>Catálogo de fotos</h2>
+      <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:8px;">Haz clic en cualquier miniatura para ver la imagen ampliada. Puedes navegar con las flechas.</p>
+      <div id="catalog-grid" class="catalog-grid"></div>
+    </section>
+    <!-- Productos -->
+    <!-- Ofertas -->
+    <section class="card offers full-width" id="offers-section">
+      <h2>Ofertas</h2>
+      <div id="offers-list" class="offers-list">
+        <!-- Ofertas generadas dinámicamente -->
+      </div>
+    </section>
+
+    <section class="card full-width">
+      <h2>Productos</h2>
+      <div class="product-list" id="product-list">
+        <!-- Productos renderizados dinámicamente desde products.json (o fallback) -->
+      </div>
+    </section>
+    <!-- (Se eliminó la sección de "Productos destacados" para que el catálogo principal muestre todos los productos) -->
+  </main>
+
+  <!-- Mensajes -->
+  <section id="contact" class="card" style="max-width: 1000px; margin: 20px auto 0;">
+    <h2>Déjanos un mensaje</h2>
+    <form id="message-form">
+      <div>
+        <label for="name">Nombre</label>
+        <input id="name" type="text" placeholder="Tu nombre" />
+      </div>
+      <div>
+        <label for="message">Mensaje</label>
+        <textarea id="message" placeholder="Escribe tu mensaje aquí..."></textarea>
+      </div>
+      <button type="submit">Enviar mensaje</button>
+    </form>
+
+    <h3>Mensajes recibidos</h3>
+    <ul id="messages-list" class="messages-list">
+      <li class="message">
+        <div class="msg-head"><strong class="msg-name">María P.</strong><span class="msg-date">2025-11-10 14:23</span></div>
+        <p class="msg-body">¡Me encantaron los productos! Compré una chalina y llegó muy rápido, la calidad es excelente. 🌸</p>
+      </li>
+      <li class="message">
+        <div class="msg-head"><strong class="msg-name">Lucía R.</strong><span class="msg-date">2025-11-09 09:12</span></div>
+        <p class="msg-body">El servicio al cliente me ayudó a elegir el color perfecto. Recomendado 100%.</p>
+      </li>
+      <li class="message">
+        <div class="msg-head"><strong class="msg-name">Carlos G.</strong><span class="msg-date">2025-11-05 18:40</span></div>
+        <p class="msg-body">Muy buena experiencia. Productos artesanales con mucho detalle. Volveré a comprar.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Footer con datos de la empresa -->
+  <footer>
+    <div class="footer-content">
+      <div>
+        <h3>GAMMS</h3>
+        <p>Tienda de tejidos artesanales hechos a mano.</p>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>Teléfono: +51 930 897 942</p>
+          <p>Correo: gammsgreisy@gmail.com</p>
+        <p>Dirección: Cajamarca, Perú</p>
+      </div>
+      <div>
+        <h4>Síguenos</h4>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/gamms_gs/" class="social-icon instagram" title="Instagram - GAMMS" aria-label="Instagram - GAMMS" target="_blank" rel="noopener">📷</a>
+          <a href="#" class="social-icon facebook" title="Facebook">f</a>
+          <a href="#" class="social-icon tiktok" title="TikTok">♬</a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copy">© 2025 GAMMS. Proyecto escolar.</p>
+  </footer>
+
+  <!-- Modal para ver fotos grandes -->
+  <div id="image-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-close" id="modal-close" role="button" aria-label="Cerrar">✕</div>
+      <img id="modal-image" src="" alt="" />
+      <p id="modal-caption" class="modal-caption"></p>
+      <div class="lightbox-controls">
+        <button id="lightbox-prev" aria-label="Anterior">◀</button>
+        <button id="lightbox-next" aria-label="Siguiente">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal carrito (SPA) -->
+  <!-- Modal de carrito eliminado: se usa ahora la página dedicada cart.html -->
+  <script src="app.js"></script>
+    <!-- Inline products data: evita problemas con fetch cuando se abre con file:// -->
+    <script id="products-data" type="application/json">
+    [
+    {
+      "id": 1,
+      "name": "Ramo Flores de Hilo",
+      "price": 65.0,
+      "description": "Ramo artesanal de flores tejidas a mano, colores vivos para decorar cualquier espacio.",
+      "category": "Decoracion",
+      "images": ["img/decoracion_flores-hilo_amarillas.jpg"]
+    },
+    {
+      "id": 2,
+      "name": "Rosas Eternas",
+      "price": 75.0,
+      "description": "Conjunto de rosas tejidas en tonos blanco y rojo. Ideal para regalo y decoración de mesas.",
+      "category": "Decoracion",
+      "images": ["img/decoracion_rosas-eternas_blancasyrojas.jpg"]
+    },
+    {
+      "id": 3,
+      "name": "Set Velas Aromáticas (Rosa)",
+      "price": 40.0,
+      "description": "Juego de velas aromáticas con aroma floral, presentación en color rosa, decorativas y perfumadas.",
+      "category": "Hogar",
+      "images": ["img/hogar__velas-aromaticas_rosa.jpg"]
+    },
+    {
+      "id": 4,
+      "name": "Flor Tejida",
+      "price": 55.0,
+      "description": "Flor tejida a mano, detalle perfecto para regalos o arreglos decorativos.",
+      "category": "Regalos",
+      "images": ["img/regalos_flor-tejida_rojo.jpeg"]
+    },
+    {
+      "id": 5,
+      "name": "Girasol Tejido",
+      "price": 50.0,
+      "description": "Girasol tejido a mano con colores brillantes, ideal como adorno.",
+      "category": "Regalos",
+      "images": ["img/regalos_girasol-tejido_amarillo.jpeg"]
+    },
+    {
+      "id": 6,
+      "name": "Muñeco Tejido (Duende)",
+      "price": 70.0,
+      "description": "Muñeco artesanal tejido, diseño de duende, acabado cuidadoso y seguro para regalo.",
+      "category": "Regalos",
+      "images": ["img/regalos_munequito-tejido_duende.jpeg"]
+    },
+    {
+      "id": 7,
+      "name": "Set Muñequitos",
+      "price": 80.0,
+      "description": "Conjunto de muñequitos tejidos en diferentes estilos, perfectos para coleccionar o regalar.",
+      "category": "Regalos",
+      "images": ["img/regalos_munequitos-tejidos_abeja.jpg"]
+    },
+    {
+      "id": 8,
+      "name": "Rosas Tejidas (Variedades)",
+      "price": 72.0,
+      "description": "Rosas tejidas en varios colores (morada, roja, rosada) presentadas como arreglo o por unidad.",
+      "category": "Regalos",
+      "images": [
+        "img/regalos_rosa-tejida_morada.jpeg",
+        "img/regalos_rosa-tejida_roja.jpeg",
+        "img/regalos_rosa-tejida_rosada.jpeg"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Calentador Tejido",
+      "price": 60.0,
+      "description": "Calentador tejido para manos o piernas, suave y abrigador.",
+      "category": "Ropa",
+      "images": ["img/ropa_calentador_tejido.jpg"]
+    },
+    {
+      "id": 10,
+      "name": "Camisa Tejida",
+      "price": 140.0,
+      "description": "Camisa tejida artesanalmente, disponible en tonos gris claro y rojo, cómoda y resistente.",
+      "category": "Ropa",
+      "images": ["img/ropa_camisa-tejida_gris-claro.jpeg", "img/ropa_camisa-tejida_rojo.jpeg"]
+    },
+    {
+      "id": 11,
+      "name": "Camisa Tejita",
+      "price": 95.0,
+      "description": "Camisa tejita de diseño ligero, ideal para climas templados.",
+      "category": "Ropa",
+      "images": ["img/ropa_camisa-tejita_amarillo.jpeg"]
+    },
+    {
+      "id": 12,
+      "name": "Chalina Tejida",
+      "price": 110.0,
+      "description": "Chalina tejida a mano, suave al tacto y con combinaciones de colores elegantes.",
+      "category": "Ropa",
+      "images": ["img/ropa_chalina-tejida_gris.jpeg", "img/ropa_chalina-tejida_grisoscuro.jpeg", "img/ropa_chalina-tejida_rojoconnegro.jpeg"]
+    },
+    {
+      "id": 13,
+      "name": "Chompa Tejita",
+      "price": 160.0,
+      "description": "Chompa tejita abrigadora, hecha con hilo de alta calidad y acabado fino.",
+      "category": "Ropa",
+      "images": ["img/ropa_chompa-tejita_gris-claro.jpeg", "img/ropa_chompa-tejita_gris.jpeg", "img/ropa_chompa-tejita_rosada.jpeg"]
+    },
+    {
+      "id": 14,
+      "name": "Gorra Rosa",
+      "price": 55.0,
+      "description": "Gorra tejida color rosa, deportiva y confortable.",
+      "category": "Ropa",
+      "images": ["img/ropa_gorra_rosa.jpg"]
+    },
+    {
+      "id": 15,
+      "name": "Gorros Tejidos",
+      "price": 65.0,
+      "description": "Gorros tejidos a mano en combinaciones blanco y rosa, suaves y cálidos.",
+      "category": "Ropa",
+      "images": ["img/ropa_gorros-tejidos_blancoyrosa.jpg"]
+    },
+    {
+      "id": 16,
+      "name": "Gorro Blanco Tejido",
+      "price": 58.0,
+      "description": "Gorro blanco tejido con diseño clásico, cómodo y cálido.",
+      "category": "Ropa",
+      "images": ["img/ropa_gorrotejido_blanco.jpeg"]
+    }
+  ]
+    </script>
+</body>
+</html>

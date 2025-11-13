@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Conócenos - GAMMS</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet (OpenStreetMap) -->
+  <!-- Integrity attributes removed to avoid blocking load if the CDN integrity/hash differs locally -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-title">
+        <h1>GAMMS</h1>
+        <p>Tienda de tejidos artesanales – Proyecto escolar</p>
+      </div>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="conocenos.html">Conócenos</a></li>
+          <li><a href="cart.html">Carrito</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" id="cart-link" aria-label="Ver carrito" title="Ver carrito">🛒 <span id="cart-count" class="cart-badge">0</span></a>
+        <div class="header-social">
+          <a href="https://www.instagram.com/gamms_gs/" class="social-icon instagram" title="Instagram - GAMMS" aria-label="Instagram - GAMMS" target="_blank" rel="noopener">📷</a>
+          <a class="instagram-msg" href="https://www.instagram.com/gamms_gs/" target="_blank" rel="noopener">Síguenos en Instagram: <strong>@gamms_gs</strong></a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card full-width hero">
+        <div class="banner-inner">
+          <img src="img/logo.jpeg" alt="Logo GAMMS" class="banner-logo" onerror="this.style.display='none'" />
+          <div class="banner-text">
+            <p>En GAMMS encontrarás el lugar perfecto para descubrir productos únicos, modernos y de excelente calidad. Somos una tienda online comprometida con ofrecerte lo mejor en cada detalle.</p>
+            <p>Compra de forma segura, rápida y sencilla. 💫</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full-width about-grid">
+        <div class="about-text">
+          <h2>Conócenos</h2>
+          <p>Bienvenido a GAMMS. Somos una pequeña tienda dedicada a la creación de productos tejidos a mano. Aquí te contamos quiénes somos y por qué hacemos lo que hacemos.</p>
+
+          <h3>Misión</h3>
+          <p>Brindar a nuestros clientes productos de calidad con un servicio confiable, accesible y moderno, ofreciendo una experiencia de compra online rápida y segura.</p>
+
+          <h3>Nuestra historia</h3>
+          <p>GAMMS nació con el sueño de crear una tienda online donde las personas pudieran encontrar productos de calidad sin complicaciones. Empezamos con la idea de ofrecer algo diferente: una experiencia de compra moderna, cercana y confiable.</p>
+
+          <h3>Propietarios</h3>
+          <ul class="owners">
+            <li>Sonia Marisela Calderón Galán</li>
+            <li>Greisy Alejandra Alarcón Ortiz</li>
+          </ul>
+
+          <h3>Contacto</h3>
+          <p>Correo: <a href="mailto:gammsgreisy@gmail.com">gammsgreisy@gmail.com</a></p>
+          <p>Teléfono: +51 930 897 942</p>
+
+          <p style="margin-top:18px;"><a href="index.html">← Volver al inicio</a></p>
+        </div>
+
+        <div class="map-container card">
+          <h3>Ubicación</h3>
+          <div id="map" style="height:320px; border-radius:8px; overflow:hidden;"></div>
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-top:8px;">Si el mapa no carga, <a id="gmaps-link" href="#">ver en Google Maps</a>.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div>
+          <h3>GAMMS</h3>
+          <p>Tienda de tejidos artesanales hechos a mano.</p>
+        </div>
+        <div>
+          <h4>Contacto</h4>
+          <p>Teléfono: +51 930 897 942</p>
+          <p>Correo: gammsgreisy@gmail.com</p>
+          <p>Dirección: Lima, Perú</p>
+        </div>
+      </div>
+      <p class="footer-copy">© 2025 GAMMS. Proyecto escolar.</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <!-- Integrity attributes removed to avoid blocking load if the CDN integrity/hash differs locally -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      // Inicializar mapa (Cajamarca, Perú aproximado)
+      (function(){
+        try {
+          const mapEl = document.getElementById('map');
+          if (!mapEl) return;
+          const lat = -7.1626, lng = -78.5040;
+
+          // Si Leaflet no cargó, mostrar fallback (enlace a Google Maps) y evitar errores
+          if (typeof L === 'undefined') {
+            console.warn('Leaflet no está disponible: mostrando enlace a Google Maps como fallback.');
+            mapEl.innerHTML = '<div style="padding:18px;color:var(--text-muted);">Mapa no disponible. <a id="gmaps-link-fallback" href="#" target="_blank" rel="noopener">Ver en Google Maps</a></div>';
+            const gmapsLink = document.getElementById('gmaps-link');
+            if (gmapsLink) gmapsLink.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+            const gmapsFallback = document.getElementById('gmaps-link-fallback');
+            if (gmapsFallback) gmapsFallback.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+            return;
+          }
+
+          const map = L.map('map', { scrollWheelZoom: false }).setView([lat, lng], 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+          }).addTo(map);
+          const marker = L.marker([lat, lng]).addTo(map).bindPopup('GAMMS - Tienda de tejidos (Cajamarca)').openPopup();
+          // link a Google Maps
+          const gmapsLink = document.getElementById('gmaps-link');
+          if (gmapsLink) gmapsLink.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        } catch (e) {
+          console.warn('Error iniciando mapa', e);
+          const mapEl = document.getElementById('map');
+          if (mapEl) mapEl.innerHTML = '<div style="padding:18px;color:var(--text-muted);">Ocurrió un error al cargar el mapa. Intenta recargar la página o <a id="gmaps-link-fallback2" href="#">ver en Google Maps</a>.</div>';
+          const gmapsFallback2 = document.getElementById('gmaps-link-fallback2');
+          if (gmapsFallback2) gmapsFallback2.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        }
+      })();
+    </script>
+  </body>
+</html>

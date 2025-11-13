@@ -1,0 +1,739 @@
+:root {
+  --bg: #fff7fb;
+  --card: #ffffff;
+  --accent: #fce7f3;
+  --primary: #f9a8d4;
+  --primary-dark: #f472b6;
+  --secondary: #bfdbfe;
+  --danger: #fecaca;
+  --text-main: #4b5563;
+  --text-muted: #9ca3af;
+  --site-max-width: 1200px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text-main);
+  padding: 20px;
+}
+
+header {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Nuevo layout del header: título, navegación y acciones alineadas */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: var(--site-max-width);
+  margin: 0 auto 20px;
+  padding: 8px 0;
+}
+
+header h1 {
+  font-size: 1.9rem;
+  margin-bottom: 0.25rem;
+  letter-spacing: 2px;
+  color: #ec4899;
+}
+
+header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Contenedor para icono + mensaje de Instagram en el header */
+.header-social {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.instagram-msg {
+  color: #7f1d6a;
+  font-weight: 700;
+  text-decoration: none;
+  background: linear-gradient(90deg, rgba(244,114,182,0.06), rgba(252,231,243,0.04));
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+}
+.instagram-msg strong { font-weight: 900; color: #be185d; }
+.instagram-msg:hover { background: rgba(244,114,182,0.12); }
+
+/* En pantallas pequeñas dejar sólo el icono y ocultar el texto para ahorrar espacio */
+@media (max-width: 720px) {
+  .instagram-msg { display: none; }
+  .header-social { gap: 6px; }
+}
+
+.cart-badge {
+  display: inline-block;
+  min-width: 20px;
+  padding: 4px 8px;
+  margin-left: 6px;
+  background: #ec4899;
+  color: white;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Centrar el título y dejar acciones (carrito) a la derecha */
+.site-header .site-title {
+  text-align: left;
+}
+
+/* asegurar que las acciones del header estén alineadas correctamente */
+.site-header .header-actions {
+  position: static;
+  display: flex;
+  align-items: center;
+}
+
+/* Navegación principal simple y elegante */
+.site-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+.site-nav a {
+  text-decoration: none;
+  color: #be185d;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.site-nav a:hover {
+  background: rgba(236,72,153,0.06);
+}
+
+.container {
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  grid-gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 6px 14px rgba(236, 72, 153, 0.08);
+}
+
+/* Cuando una tarjeta necesita ocupar todo el ancho del grid (sin aside) */
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Banner principal: logo + mensaje de bienvenida */
+.banner-inner {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.banner-logo {
+  width: 220px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+  box-shadow: 0 10px 26px rgba(16,24,40,0.08);
+}
+.banner-text p {
+  margin-bottom: 8px;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+.banner-text {
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+.banner-text p:first-child {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #be185d;
+}
+.banner-text p:last-child {
+  font-size: 0.98rem;
+  color: var(--text-main);
+}
+.banner {
+  background: linear-gradient(180deg, rgba(255,249,250,0.95), rgba(252,237,243,0.95));
+  border: 1px solid rgba(236,72,153,0.06);
+}
+
+@media (max-width: 720px) {
+  .banner-inner { flex-direction: column; align-items: flex-start; }
+  .banner-logo { width: 140px; }
+  .banner-text p:first-child { font-size: 1rem; }
+}
+
+/* Conócenos page: about grid and map */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 18px;
+  align-items: start;
+}
+.about-text h2 { margin-top: 0; }
+.owners { list-style: none; padding-left: 0; display: grid; gap: 6px; }
+.owners li { background: #fff; padding: 8px 10px; border-radius: 8px; border:1px solid rgba(236,72,153,0.04); }
+.map-container { padding: 12px; }
+
+@media (max-width: 900px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .map-container { order: 2; }
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #db2777;
+}
+
+.ref {
+  display:inline-block;
+  font-size:0.72rem;
+  color: #6b7280;
+  margin-right:6px;
+  font-weight:700;
+}
+
+.product-list {
+  /* Nota: esta regla define el grid interno usado como fallback.
+     Más abajo se redefinen selectivamente el contenedor principal de
+     categorías y el grid interno de cada categoría para un layout
+     horizontal tipo columnas. */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.product {
+  border-radius: 14px;
+  padding: 10px;
+  border: 1px solid #e0f2fe;
+  background: linear-gradient(135deg, #fdf2ff, #e0f2fe);
+}
+
+.product img.product-img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  /* Mantener la proporción original sin deformar: limitar height y usar contain */
+  height: auto;
+  max-height: 360px;
+  object-fit: contain;
+  background: #fff;
+  display: block;
+  cursor: pointer;
+}
+
+.product h3 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: #be185d;
+}
+
+.product p {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.price {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* Miniaturas dentro de la tarjeta de producto */
+.thumb-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.product-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.product-thumb:focus,
+.product-thumb:hover {
+  border-color: #f472b6;
+}
+
+/* Botones: apariencia más moderna y coherente */
+button {
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(16,24,40,0.06);
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(16,24,40,0.08);
+  opacity: 0.98;
+}
+
+/* Botones dentro del listado del carrito */
+#cart-items li button {
+  margin-left: 8px;
+  padding-inline: 8px;
+  font-size: 0.82rem;
+  background: linear-gradient(90deg,#fb7185,#ef4444);
+  color: white;
+  border-radius: 8px;
+}
+
+#clear-cart {
+  margin-top: 8px;
+  background: linear-gradient(90deg,#fda4af,#fb7185);
+  color: white;
+}
+
+#checkout-btn {
+  margin-top: 8px;
+  background: linear-gradient(90deg,#34d399,#10b981);
+  color: white;
+}
+
+/* Botones del modal (carrito modal eliminado) */
+
+#checkout-message {
+  font-size: 0.85rem;
+  color: #16a34a;
+  margin-top: 6px;
+  display: none;
+}
+
+#cart-empty {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+#cart-items {
+  list-style: none;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  max-height: 170px;
+  overflow-y: auto;
+}
+
+#cart-items li {
+  margin-bottom: 4px;
+}
+
+.total {
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Contacto / mensajes */
+#contact {
+  margin-top: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+input,
+textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  background: #fdf2ff;
+}
+
+/* Mejora visual para la sección de mensajes */
+.messages-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.message {
+  background: linear-gradient(180deg,#ffffff,#fff7fb);
+  border: 1px solid rgba(236,72,153,0.08);
+  padding: 12px 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(236,72,153,0.03);
+}
+.msg-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.msg-name {
+  color: #be185d;
+  font-weight: 700;
+}
+.msg-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.msg-body {
+  margin: 0;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+/* Estilo del formulario: input y botón más limpios */
+#message-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+}
+#message-form div {
+  width: 100%;
+}
+#message-form textarea { grid-column: 1 / -1; min-height: 90px; }
+#message-form button {
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding: 10px 14px;
+  background: linear-gradient(90deg,#f472b6,#fb7185);
+  color: white;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+#messages-list {
+  list-style: none;
+  font-size: 0.85rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#messages-list li {
+  padding: 6px 8px;
+  background: #fef9c3;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+/* Footer */
+footer {
+  max-width: var(--site-max-width);
+  margin: 20px auto 0;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fee2e2, #e0f2fe);
+  color: #4b5563;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.footer-content h3,
+.footer-content h4 {
+  margin-bottom: 4px;
+  color: #db2777;
+}
+
+.social-icons {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 1.25rem;
+  color: #be185d;
+}
+
+.social-icon.instagram { background: #fed7ff; }
+.social-icon.facebook  { background: #bfdbfe; }
+.social-icon.tiktok    { background: #bbf7d0; }
+
+.footer-copy {
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* Modal imágenes */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 10px;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Layout horizontal por categorías: el contenedor principal de categorías
+  (el div con id="product-list") se muestra como fila de columnas. Cada
+  .category-section actúa como columna con los productos apilados verticalmente. */
+/* Contenedor principal de categorías: cada categoría ocupa el ancho completo
+   y se apila verticalmente. Dentro de cada .category-section mostramos los
+   productos en un grid flexible (filas de tarjetas). */
+#product-list {
+  display: block;
+}
+.category-section {
+  width: 100%;
+  margin-bottom: 18px;
+}
+.category-section > .product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.category-section .product {
+  width: 100%;
+}
+
+/* Responsive: en pantallas pequeñas las tarjetas se apilan automáticamente */
+@media (max-width: 600px) {
+  .category-section > .product-list {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+}
+
+/* Mini-ventana que aparece al agregar un producto al carrito */
+.mini-cart-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.35);
+  z-index: 80;
+}
+.mini-cart {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  width: 480px;
+  max-width: calc(100% - 32px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.mini-cart img { width: 110px; height: 110px; object-fit: cover; border-radius: 10px; }
+.mini-cart .mini-title { font-weight: 800; color: #be185d; margin-bottom: 8px; font-size: 1.05rem; }
+.mini-cart .mini-desc { color: #6b7280; font-size: 0.92rem; margin-bottom: 8px; }
+.mini-cart .mini-price { font-weight: 800; color: #0f766e; margin-bottom: 6px; }
+.mini-cart .mini-actions { display:flex; gap:8px; margin-top:10px; }
+.mini-cart .btn-continue { background: linear-gradient(90deg,#f472b6,#fb7185); padding:10px 12px; border-radius:8px; color:#fff; font-weight:700; }
+.mini-cart .btn-go-cart { background: linear-gradient(90deg,#34d399,#10b981); padding:10px 12px; border-radius:8px; color:#fff; font-weight:700; }
+
+.modal-close {
+  text-align: right;
+  margin-bottom: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #4b5563;
+}
+
+.modal-caption {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* Estilos del carrito modal eliminados (usamos cart.html) */
+
+/* Galería */
+
+/* Carrusel de catálogo */
+#catalog-grid {
+  width: 100%;
+}
+.carousel {
+  position: relative;
+}
+.carousel-viewport {
+  overflow: hidden; /* ocultar barra nativa */
+}
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  padding: 12px 10px;
+  will-change: transform;
+}
+.carousel-item {
+  flex: 0 0 auto;
+}
+.carousel-item img {
+  /* Más verticales: mantener ancho razonable pero aumentar la altura */
+  width: 280px;
+  height: 380px;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: 0 8px 26px rgba(16,24,40,0.09);
+}
+
+@media (min-width: 1200px) {
+  .carousel-item img { width: 320px; height: 320px; }
+}
+
+@media (max-width: 720px) {
+  .carousel-item img { width: 180px; height: 260px; }
+}
+.carousel-prev, .carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(0,0,0,0.06);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 20;
+}
+.carousel-prev { left: 6px; }
+.carousel-next { right: 6px; }
+.carousel-prev[disabled], .carousel-next[disabled] { opacity: 0.5; pointer-events: none; }
+
+/* Ofertas */
+.offers-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 8px;
+}
+.offer-card {
+  background: linear-gradient(180deg,#fff,#fff7fb);
+  border: 1px solid rgba(236,72,153,0.06);
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.offer-thumb { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; flex: 0 0 84px; }
+.offer-info { flex: 1 1 auto; }
+.offer-title { font-weight: 700; color: #be185d; margin-bottom: 6px; font-size: 0.95rem; }
+.offer-prices { display:flex; gap:8px; align-items:center; }
+.offer-original { color: var(--text-muted); text-decoration: line-through; font-size: 0.92rem; }
+.offer-new { color: #0f766e; font-weight:800; font-size:1rem; }
+.offer-badge { background: linear-gradient(90deg,#fb7185,#f97316); color: white; padding: 6px 8px; border-radius: 999px; font-weight:800; font-size:0.8rem; }
+.offer-cta { margin-left: 8px; background: linear-gradient(90deg,#f472b6,#fb7185); color:white; border-radius:8px; padding:6px 10px; border:none; cursor:pointer; }
+
+@media (max-width: 720px) {
+  .offer-card { flex-direction: row; }
+  .offer-thumb { width: 72px; height:72px; }
+}
+
+.catalog-grid img:focus,
+.catalog-grid img:hover {
+  outline: none;
+  border-color: #f472b6;
+}
+
+/* Lightbox controls */
+.lightbox-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.lightbox-controls button {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
