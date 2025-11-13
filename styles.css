@@ -867,7 +867,7 @@ footer {
   }
   .site-header .site-title { text-align: left; }
   /* Make the menu button flow naturally (not absolute) to avoid overlap */
-  .menu-toggle { position: relative; left: auto; top: auto; transform: none; align-self: flex-start; margin: 0; z-index: 60; }
+  .menu-toggle { position: relative; left: auto; top: auto; transform: none; align-self: flex-start; margin: 0; z-index: 60; width:52px; height:52px; font-size:1.6rem; }
   /* Stack ordering: title first, then menu, then actions */
   .site-header .site-title { order: 1; }
   #menu-toggle { order: 0; }
@@ -924,5 +924,5 @@ footer {
 #back-to-top:focus { outline: 3px solid rgba(236,72,153,0.18); }
 
 @media (max-width: 480px) {
-  #back-to-top { width: 40px; height: 40px; font-size: 18px; right: 12px; bottom: 12px; }
+  #back-to-top { width: 46px; height: 46px; font-size: 20px; right: 12px; bottom: 12px; }
 }
