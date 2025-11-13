@@ -670,6 +670,20 @@ async function init() {
   setupCartButtons();
   setupMessages();
 
+  // Mobile menu toggle: busca el botón y añade comportamiento
+  const menuToggle = document.getElementById('menu-toggle');
+  const siteNav = document.querySelector('.site-nav');
+  if (menuToggle && siteNav) {
+    menuToggle.addEventListener('click', () => {
+      siteNav.classList.toggle('open');
+    });
+    // cerrar menú al hacer click en un enlace (mejor UX en mobile)
+    siteNav.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (a && siteNav.classList.contains('open')) siteNav.classList.remove('open');
+    });
+  }
+
   // Cargar productos y renderizar
   await loadProducts();
   renderProducts();

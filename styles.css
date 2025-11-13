@@ -10,6 +10,15 @@
   --text-muted: #9ca3af;
   --site-max-width: 1200px;
 }
+/* Botón hamburguesa (visible en pantallas pequeñas) */
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #be185d;
+}
 
 * {
   box-sizing: border-box;
@@ -213,6 +222,34 @@ h2 {
   color: #db2777;
 }
 
+  /* Header: stack items and show hamburger */
+  .site-header {
+    align-items: center;
+    gap: 8px;
+  }
+  .menu-toggle { display: block; }
+  .site-nav { display: none; width: 100%; }
+  .site-nav.open { display: block; }
+  .site-nav ul { flex-direction: column; gap: 6px; padding: 10px 0; }
+  .site-nav a { display: block; padding: 8px 12px; }
+
+  /* Header actions move below on very small screens */
+  .header-actions { margin-left: 0; }
+
+  /* Banner layout for small screens */
+  .banner-inner { flex-direction: column; align-items: center; }
+  .banner-text { text-align: center; }
+
+  /* Ajustes para productos y carrusel */
+  .product img.product-img { max-height: 240px; }
+  .carousel-item img { width: 180px; height: 240px; }
+
+  /* Mini cart full width */
+  .mini-cart { width: calc(100% - 32px); grid-template-columns: 90px 1fr; }
+  .mini-cart img { width: 90px; height: 90px; }
+
+  /* Footer stack */
+  .footer-content { flex-direction: column; gap: 12px; }
 .ref {
   display:inline-block;
   font-size:0.72rem;
