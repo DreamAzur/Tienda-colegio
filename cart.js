@@ -155,36 +155,45 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Envío simplificado: usar POST nativo (formulario) a Formspree para evitar problemas de CORS/fetch.
+      const statusEl = document.getElementById('checkout-status');
+      const submitBtn = document.querySelector('#checkout-form button[type="submit"]');
+      if (statusEl) statusEl.textContent = '';
+      if (submitBtn) submitBtn.disabled = true;
+
       if (FORMSPREE_ENDPOINT) {
         // Usar fetch para evitar bloqueadores de pop-ups y problemas CORS.
         // submitOrderViaFormspree ahora devuelve una Promise<boolean>.
-        submitOrderViaFormspree(order).then((ok) => {
-          if (ok) {
-            alert('Pedido enviado correctamente. Revisa tu correo (o la bandeja de entrada configurada en Formspree).');
+        if (statusEl) statusEl.textContent = 'Enviando pedido...';
+        submitOrderViaFormspree(order).then((result) => {
+          // result: { ok: boolean, status: number, body: string }
+          if (result && result.ok) {
+            if (statusEl) statusEl.textContent = 'Pedido enviado correctamente. Revisa la bandeja configurada en Formspree.';
             // limpiar carrito después del envío exitoso
             saveCartLocal([]);
             renderCartPage();
             const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
           } else {
-            // fallback: abrir cliente de correo
+            if (statusEl) statusEl.textContent = `Formspree devolvió ${result && result.status ? result.status : 'error'}: ${result && result.body ? result.body : 'sin detalle'}`;
+            // intentar fallback mailto
             sendOrderViaMailto(order);
-            // limpiar carrito (el usuario tendrá el mail abierto)
             saveCartLocal([]);
             renderCartPage();
             const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
           }
-        }).catch((err) => {
-          console.error('Error enviando a Formspree:', err);
+        }).catch(() => {
+          if (statusEl) statusEl.textContent = 'Error de red al intentar enviar a Formspree; abriendo cliente de correo.';
           sendOrderViaMailto(order);
           saveCartLocal([]);
           renderCartPage();
           const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
-        });
+        }).finally(() => { if (submitBtn) submitBtn.disabled = false; });
       } else {
+        if (statusEl) statusEl.textContent = 'Abriendo cliente de correo...';
         sendOrderViaMailto(order);
         saveCartLocal([]);
         renderCartPage();
         const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
+        if (submitBtn) submitBtn.disabled = false;
       }
   });
 });
@@ -204,26 +213,51 @@ async function submitOrderViaFormspree(order) {
     const payload = {
       Nombre: order.customer.name,
       Correo: order.customer.email,
+      email: order.customer.email,
+      _replyto: order.customer.email,
       Telefono: order.customer.phone || '',
       Direccion: order.customer.address || '',
       Comentario: order.customer.comment || '',
       Pedido: order.items.map((it) => `${it.name} (x${it.quantity}) - S/ ${(it.price * it.quantity).toFixed(2)}`).join('\n')
     };
 
-    const res = await fetch(FORMSPREE_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
+    // Intento 1: enviar JSON
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
 
-    // Formspree responde con 200/201 en caso de éxito cuando se usa JSON
-    if (res.ok) return true;
-    // intentar leer mensaje de error para depuración
-    try { const json = await res.json(); console.warn('Formspree response not ok:', json); } catch(e){}
-    return false;
+      let body = '';
+      try { const j = await res.json(); body = JSON.stringify(j); } catch (e) { try { body = await res.text(); } catch (ee) { body = ''; } }
+
+      if (res.ok) return { ok: true, status: res.status, body };
+      // si no ok, continuar a intento 2
+      // Intento 2: enviar como form-urlencoded (fallback)
+    } catch (e) {
+      // si falla la petición JSON, intentaremos el form-encoded abajo
+    }
+
+    // Intento 2: enviar como application/x-www-form-urlencoded
+    try {
+      const params = new URLSearchParams();
+      Object.keys(payload).forEach((k) => { params.append(k, payload[k]); });
+      const res2 = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
+      });
+      let body2 = '';
+      try { const j2 = await res2.json(); body2 = JSON.stringify(j2); } catch (e) { try { body2 = await res2.text(); } catch (ee) { body2 = ''; } }
+      if (res2.ok) return { ok: true, status: res2.status, body: body2 };
+      return { ok: false, status: res2.status, body: body2 };
+    } catch (e) {
+      return { ok: false, status: 0, body: 'network-error' };
+    }
   } catch (e) {
     console.error('submitOrderViaFormspree error:', e);
     return false;
