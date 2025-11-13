@@ -21,6 +21,43 @@ function saveCart() {
   }
 }
 
+// Exponer una API de carrito global para que otras partes del sitio (p.ej. cart.js)
+// puedan reutilizar la misma lógica y evitar duplicación.
+window.GAMMS_CART = window.GAMMS_CART || (function(){
+  const api = {
+    get() {
+      try {
+        const raw = localStorage.getItem('gamms_cart');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    },
+    set(newCart) {
+      cart = Array.isArray(newCart) ? newCart : [];
+      try { localStorage.setItem('gamms_cart', JSON.stringify(cart)); } catch(e){}
+      try { if (typeof renderCart === 'function') renderCart(); } catch(e){}
+      return cart;
+    },
+    addItem(item) {
+      try {
+        const id = String(item.id);
+        const existing = cart.find((it) => String(it.id) === id);
+        if (existing) existing.quantity = (Number(existing.quantity) || 0) + (Number(item.quantity) || 1);
+        else cart.push({ id: String(item.id), name: item.name, price: Number(item.price) || 0, quantity: Number(item.quantity) || 1, image: item.image || '' });
+        this.set(cart);
+      } catch (e) { /* ignore */ }
+      return cart;
+    },
+    removeItem(id) {
+      try { const idx = cart.findIndex((it) => String(it.id) === String(id)); if (idx >= 0) { cart.splice(idx,1); this.set(cart); } } catch(e){}
+      return cart;
+    },
+    clear() { cart = []; try{ localStorage.removeItem('gamms_cart'); }catch(e){}; try { if (typeof renderCart === 'function') renderCart(); } catch(e){}; return cart; },
+    getTotal() { return cart.reduce((s,it) => s + (Number(it.price)||0) * (Number(it.quantity)||1), 0); },
+    count() { return cart.reduce((s,it) => s + (Number(it.quantity)||0), 0); }
+  };
+  return api;
+})();
+
 // --- Productos (cargar desde products.json con fallback) ---
 let products = [];
 // Placeholder SVG data URI para imágenes que no carguen
@@ -188,7 +225,7 @@ function renderCart() {
   if (!cartItems) {
     const badge = document.getElementById('cart-count');
     if (badge) {
-      const totalQty = cart.reduce((s, it) => s + (it.quantity || 0), 0);
+      const totalQty = (window.GAMMS_CART && typeof window.GAMMS_CART.count === 'function') ? window.GAMMS_CART.count() : cart.reduce((s, it) => s + (it.quantity || 0), 0);
       badge.textContent = totalQty;
     }
     return;
@@ -215,9 +252,13 @@ function renderCart() {
     const removeBtn = document.createElement('button');
     removeBtn.textContent = 'Quitar';
     removeBtn.addEventListener('click', () => {
-      cart.splice(index, 1);
-      saveCart();
-      renderCart();
+      if (window.GAMMS_CART && typeof window.GAMMS_CART.removeItem === 'function') {
+        window.GAMMS_CART.removeItem(item.id);
+      } else {
+        cart.splice(index, 1);
+        saveCart();
+        renderCart();
+      }
     });
 
     li.appendChild(removeBtn);
@@ -230,7 +271,7 @@ function renderCart() {
   // actualizar badge del header si existe
   const badge = document.getElementById('cart-count');
   if (badge) {
-    const totalQty = cart.reduce((s, it) => s + (it.quantity || 0), 0);
+    const totalQty = (window.GAMMS_CART && typeof window.GAMMS_CART.count === 'function') ? window.GAMMS_CART.count() : cart.reduce((s, it) => s + (it.quantity || 0), 0);
     badge.textContent = totalQty;
   }
 }
@@ -251,11 +292,15 @@ function setupAddToCart() {
   const imgSrc = imgEl ? imgEl.src : '';
 
     const existing = cart.find((it) => it.id === id);
-    if (existing) existing.quantity += 1;
-    else cart.push({ id, name, price, quantity: 1, image: imgSrc });
-
-    saveCart();
-    renderCart();
+    // usar la API global si está disponible para evitar duplicación
+    if (window.GAMMS_CART && typeof window.GAMMS_CART.addItem === 'function') {
+      window.GAMMS_CART.addItem({ id, name, price, quantity: 1, image: imgSrc });
+    } else {
+      if (existing) existing.quantity += 1;
+      else cart.push({ id, name, price, quantity: 1, image: imgSrc });
+      saveCart();
+      renderCart();
+    }
 
     // Buscar producto completo en products para mostrar descripción y categoría
     const prod = products.find((p) => String(p.id) === String(id));
@@ -270,9 +315,8 @@ function setupCartButtons() {
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
       if (!confirm('¿Vaciar el carrito?')) return;
-      cart = [];
-      saveCart();
-      renderCart();
+      if (window.GAMMS_CART && typeof window.GAMMS_CART.clear === 'function') window.GAMMS_CART.clear();
+      else { cart = []; saveCart(); renderCart(); }
     });
   }
 
@@ -288,10 +332,11 @@ function setupCartButtons() {
       }
 
       // Si estamos en otra página (p. ej. cart.html), conservar comportamiento actual
-      if (cart.length === 0) { alert('Tu carrito está vacío.'); return; }
+      const currentCart = (window.GAMMS_CART && typeof window.GAMMS_CART.get === 'function') ? window.GAMMS_CART.get() : cart;
+      if (!currentCart || currentCart.length === 0) { alert('Tu carrito está vacío.'); return; }
 
       let total = 0;
-      const resumen = cart.map((item) => {
+      const resumen = currentCart.map((item) => {
         const subtotal = item.price * item.quantity; total += subtotal;
         return `${item.name} (x${item.quantity}) - S/ ${subtotal.toFixed(2)}`;
       }).join('\n');
@@ -329,7 +374,7 @@ function setupMessages() {
   });
 }
 
-// showToast removed: no longer utilizado (se conservó la mini-ventana como feedback)
+// (showToast eliminado; usar mini-ventana de feedback)
 
 // --- Mini-ventana de confirmación al agregar al carrito ---
 function showAddToCartModal(item) {

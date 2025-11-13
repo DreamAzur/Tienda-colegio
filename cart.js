@@ -2,30 +2,28 @@
 
 function loadCartLocal() {
   try {
+    if (window.GAMMS_CART && typeof window.GAMMS_CART.get === 'function') return window.GAMMS_CART.get();
     const raw = localStorage.getItem('gamms_cart');
     return raw ? JSON.parse(raw) : [];
-  } catch (e) {
-    // error leyendo localStorage (silenciado)
-    return [];
-  }
+  } catch (e) { return []; }
 }
 
 // El endpoint de Formspree se obtiene desde `window.GAMMS_CONFIG.FORMSPREE_ENDPOINT`
 
 function saveCartLocal(cart) {
   try {
+    if (window.GAMMS_CART && typeof window.GAMMS_CART.set === 'function') return window.GAMMS_CART.set(cart);
     localStorage.setItem('gamms_cart', JSON.stringify(cart));
-    // actualizar badge si existe
     updateCartBadge(cart);
-  } catch (e) {
-    // error guardando localStorage (silenciado)
-  }
+  } catch (e) { /* silenciado */ }
 }
 
 function updateCartBadge(cart) {
   const badge = document.getElementById('cart-count');
   if (!badge) return;
-  const totalQty = cart.reduce((s, it) => s + (it.quantity || 0), 0);
+  let totalQty = 0;
+  if (window.GAMMS_CART && typeof window.GAMMS_CART.count === 'function') totalQty = window.GAMMS_CART.count();
+  else totalQty = (cart || []).reduce((s, it) => s + (it.quantity || 0), 0);
   badge.textContent = totalQty;
 }
 
@@ -145,7 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!cart || cart.length === 0) { alert('No hay items en el carrito.'); return; }
   const name = document.getElementById('cust-name').value.trim();
   const emailEl = document.getElementById('cust-email');
-  const email = emailEl ? emailEl.value.trim() : '';
+  const rawEmail = emailEl ? emailEl.value : '';
+  // Sanitizar email: quitar espacios y caracteres de control, normalizar a minúsculas
+  const email = rawEmail ? String(rawEmail).replace(/\s+/g, '').toLowerCase() : '';
   const phone = document.getElementById('cust-phone').value.trim();
   const address = document.getElementById('cust-address').value.trim();
   const commentEl = document.getElementById('cust-comment');
@@ -156,17 +156,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (submitBtn) submitBtn.disabled = false;
       return;
     }
-    // Validar formato de email usando la validación nativa del input (si existe)
-    if (emailEl && typeof emailEl.checkValidity === 'function' && !emailEl.checkValidity()) {
-      if (statusEl) statusEl.textContent = 'Por favor ingresa un email válido.';
-      if (emailEl.reportValidity) emailEl.reportValidity();
+    // Validar formato de email: primero usar validación nativa, luego una comprobación regex más estricta
+    const basicValid = !(emailEl && typeof emailEl.checkValidity === 'function') || emailEl.checkValidity();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const regexValid = emailRegex.test(email);
+    if (!basicValid || !regexValid) {
+      if (statusEl) statusEl.textContent = 'Por favor ingresa un email válido (ej: tu@ejemplo.com).';
+      if (emailEl && emailEl.reportValidity) emailEl.reportValidity();
       if (submitBtn) submitBtn.disabled = false;
       return;
     }
 
+    // calcular total del pedido
+    const total = cart.reduce((s, it) => s + (Number(it.price || 0) * Number(it.quantity || 1)), 0);
     const order = {
       customer: { name, email, phone, address, comment },
-      items: cart.map((it) => ({ id: it.id, name: it.name, price: it.price, quantity: it.quantity }))
+      items: cart.map((it) => ({ id: it.id, name: it.name, price: it.price, quantity: it.quantity })),
+      total: +total.toFixed(2)
     };
 
     // Envío simplificado: usar POST nativo (formulario) a Formspree para evitar problemas de CORS/fetch.
@@ -212,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function sendOrderViaMailto(order) {
   const subject = encodeURIComponent('Pedido GAMMS - ' + new Date().toLocaleString());
   const itemsText = order.items.map((it) => `${it.name} (x${it.quantity}) - S/ ${ (it.price * it.quantity).toFixed(2) }`).join('%0A');
-  const body = encodeURIComponent(`Cliente: ${order.customer.name}\nEmail: ${order.customer.email}\nTel: ${order.customer.phone || ''}\nDirección: ${order.customer.address || ''}\nComentario: ${order.customer.comment || ''}\n\nPedido:\n${itemsText}`);
+  const totalText = order.total !== undefined ? `\n\nTotal: S/ ${Number(order.total).toFixed(2)}` : '';
+  const body = encodeURIComponent(`Cliente: ${order.customer.name}\nEmail: ${order.customer.email}\nTel: ${order.customer.phone || ''}\nDirección: ${order.customer.address || ''}\nComentario: ${order.customer.comment || ''}\n\nPedido:\n${itemsText}${totalText}`);
   const to = 'gammsgreisy@gmail.com';
   window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
 }
@@ -229,7 +236,10 @@ async function submitOrderViaFormspree(order, endpoint) {
       Telefono: order.customer.phone || '',
       Direccion: order.customer.address || '',
       Comentario: order.customer.comment || '',
-      Pedido: order.items.map((it) => `${it.name} (x${it.quantity}) - S/ ${(it.price * it.quantity).toFixed(2)}`).join('\n')
+      Pedido: order.items.map((it) => `${it.name} (x${it.quantity}) - S/ ${(it.price * it.quantity).toFixed(2)}`).join('\n'),
+      Total: `S/ ${order.total.toFixed(2)}`,
+      subject: `Pedido GAMMS - S/ ${order.total.toFixed(2)}`,
+      page: (typeof window !== 'undefined' && window.location ? window.location.href : 'GAMMS')
     };
 
     // Intento 1: enviar JSON
