@@ -238,8 +238,11 @@ h2 {
 /* Desktop: mostrar siempre la navegación y ocultar el botón hamburguesa */
 @media (min-width: 769px) {
   .menu-toggle { display: none !important; }
+  /* En pantallas grandes mostramos el nav siempre y en orientación horizontal */
   .site-nav { position: static !important; max-height: none !important; opacity: 1 !important; box-shadow: none; background: transparent; }
-  .site-nav ul { flex-direction: row; gap: 10px; }
+    /* Aumentar especificidad para que esta regla gane sobre la regla
+      posterior que fuerza columna en el bloque mobile. */
+    .site-header .site-nav ul { flex-direction: row; gap: 14px; align-items: center; }
   .site-nav a { padding: 8px 12px; border-radius: 10px; }
   /* Desktop layout: aside appears on the right */
   .container { grid-template-columns: 1fr 340px; }
