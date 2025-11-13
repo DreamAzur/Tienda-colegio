@@ -155,22 +155,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Envío simplificado: usar POST nativo (formulario) a Formspree para evitar problemas de CORS/fetch.
-    if (FORMSPREE_ENDPOINT) {
-      const ok = submitOrderViaFormspree(order);
-      if (ok) {
-        alert('Se abrió una pestaña para completar el envío (Formspree). Si la pestaña no aparece revisa bloqueador de pop-ups.');
+      if (FORMSPREE_ENDPOINT) {
+        // Usar fetch para evitar bloqueadores de pop-ups y problemas CORS.
+        // submitOrderViaFormspree ahora devuelve una Promise<boolean>.
+        submitOrderViaFormspree(order).then((ok) => {
+          if (ok) {
+            alert('Pedido enviado correctamente. Revisa tu correo (o la bandeja de entrada configurada en Formspree).');
+            // limpiar carrito después del envío exitoso
+            saveCartLocal([]);
+            renderCartPage();
+            const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
+          } else {
+            // fallback: abrir cliente de correo
+            sendOrderViaMailto(order);
+            // limpiar carrito (el usuario tendrá el mail abierto)
+            saveCartLocal([]);
+            renderCartPage();
+            const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
+          }
+        }).catch((err) => {
+          console.error('Error enviando a Formspree:', err);
+          sendOrderViaMailto(order);
+          saveCartLocal([]);
+          renderCartPage();
+          const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
+        });
       } else {
-        // como último recurso abrir cliente de correo
         sendOrderViaMailto(order);
+        saveCartLocal([]);
+        renderCartPage();
+        const formEl = document.getElementById('checkout-form'); if (formEl) formEl.reset();
       }
-    } else {
-      sendOrderViaMailto(order);
-    }
-
-    // limpiar carrito después del envío
-    saveCartLocal([]);
-    renderCartPage();
-    document.getElementById('checkout-form').reset();
   });
 });
 
@@ -183,37 +198,32 @@ function sendOrderViaMailto(order) {
 }
 
 // Fallback: enviar el pedido creando un formulario y enviándolo (abre nueva pestaña).
-function submitOrderViaFormspree(order) {
+async function submitOrderViaFormspree(order) {
   if (!FORMSPREE_ENDPOINT) return false;
   try {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = FORMSPREE_ENDPOINT;
-    form.target = '_blank';
-    form.style.display = 'none';
-
-    const append = (name, value) => {
-      const inp = document.createElement('input');
-      inp.type = 'hidden';
-      inp.name = name;
-      inp.value = value;
-      form.appendChild(inp);
+    const payload = {
+      Nombre: order.customer.name,
+      Correo: order.customer.email,
+      Telefono: order.customer.phone || '',
+      Direccion: order.customer.address || '',
+      Comentario: order.customer.comment || '',
+      Pedido: order.items.map((it) => `${it.name} (x${it.quantity}) - S/ ${(it.price * it.quantity).toFixed(2)}`).join('\n')
     };
 
-  // Usar etiquetas en español para que Formspree muestre los campos en español
-  append('Nombre', order.customer.name);
-  append('Correo', order.customer.email);
-  append('Telefono', order.customer.phone || '');
-  append('Direccion', order.customer.address || '');
-  append('Comentario', order.customer.comment || '');
-  // Formatear pedido en texto legible (líneas) en lugar de JSON
-  const itemsText = order.items.map((it) => `${it.name} (x${it.quantity}) - S/ ${(it.price * it.quantity).toFixed(2)}`).join('\n');
-  append('Pedido', itemsText);
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
 
-    document.body.appendChild(form);
-    form.submit();
-    form.remove();
-    return true;
+    // Formspree responde con 200/201 en caso de éxito cuando se usa JSON
+    if (res.ok) return true;
+    // intentar leer mensaje de error para depuración
+    try { const json = await res.json(); console.warn('Formspree response not ok:', json); } catch(e){}
+    return false;
   } catch (e) {
     console.error('submitOrderViaFormspree error:', e);
     return false;
