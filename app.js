@@ -664,6 +664,64 @@ function setupLightboxControls() {
 
 // --- Inicialización ---
 async function init() {
+  // Manejador global de errores para diagnóstico: mostrará un pequeño overlay
+  // con el último error y lo registrará en consola. Activa sólo en desarrollo.
+  (function setupGlobalErrorCapture(){
+    try {
+      const showErrorOverlay = (msg, url, line, col, error) => {
+        console.error('Captured error:', msg, url, line, col, error);
+        // crear overlay si no existe
+        if (document.getElementById('error-overlay')) return;
+        const ov = document.createElement('div');
+        ov.id = 'error-overlay';
+        ov.style.position = 'fixed';
+        ov.style.right = '12px';
+        ov.style.bottom = '12px';
+        ov.style.zIndex = '9999';
+        ov.style.background = 'rgba(255,255,255,0.96)';
+        ov.style.border = '1px solid rgba(220,38,93,0.12)';
+        ov.style.padding = '10px';
+        ov.style.borderRadius = '8px';
+        ov.style.maxWidth = '360px';
+        ov.style.boxShadow = '0 8px 28px rgba(16,24,40,0.12)';
+        const pre = document.createElement('pre');
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.margin = '0 0 8px 0';
+        pre.style.fontSize = '12px';
+        pre.textContent = `${msg}\n${url || ''}:${line || ''}:${col || ''}\n${(error && error.stack) ? error.stack : ''}`;
+        const btn = document.createElement('button');
+        btn.textContent = 'Copiar error';
+        btn.style.padding = '6px 8px';
+        btn.style.borderRadius = '6px';
+        btn.style.border = 'none';
+        btn.style.background = 'linear-gradient(90deg,#fb7185,#ef4444)';
+        btn.style.color = '#fff';
+        btn.addEventListener('click', () => {
+          navigator.clipboard && navigator.clipboard.writeText(pre.textContent || '').then(()=>{
+            btn.textContent = 'Copiado'; setTimeout(()=>btn.textContent='Copiar error',1200);
+          });
+        });
+        const close = document.createElement('button');
+        close.textContent = 'Cerrar';
+        close.style.marginLeft = '8px';
+        close.addEventListener('click', () => ov.remove());
+        ov.appendChild(pre);
+        const controls = document.createElement('div');
+        controls.style.display = 'flex';
+        controls.appendChild(btn);
+        controls.appendChild(close);
+        ov.appendChild(controls);
+        document.body.appendChild(ov);
+      };
+
+      window.addEventListener('error', (ev) => {
+        try { showErrorOverlay(ev.message || 'Error', ev.filename, ev.lineno, ev.colno, ev.error); } catch(e) { console.error(e); }
+      });
+      window.addEventListener('unhandledrejection', (ev) => {
+        try { showErrorOverlay(ev.reason && ev.reason.message ? ev.reason.message : String(ev.reason), '', '', '', ev.reason); } catch(e) { console.error(e); }
+      });
+    } catch (e) { console.warn('No se pudo instalar global error capture', e); }
+  })();
   loadCart();
   renderCart();
   setupAddToCart();
@@ -675,13 +733,21 @@ async function init() {
   const siteNav = document.querySelector('.site-nav');
   if (menuToggle && siteNav) {
     menuToggle.addEventListener('click', () => {
+      const opening = !siteNav.classList.contains('open');
       siteNav.classList.toggle('open');
+      // accesibilidad
+      menuToggle.setAttribute('aria-expanded', String(opening));
     });
     // cerrar menú al hacer click en un enlace (mejor UX en mobile)
     siteNav.addEventListener('click', (e) => {
       const a = e.target.closest('a');
       if (a && siteNav.classList.contains('open')) siteNav.classList.remove('open');
     });
+  }
+
+  // Si la página no tiene nav pero sí el botón, ocultarlo para evitar ver un botón inactivo
+  if (menuToggle && !siteNav) {
+    menuToggle.style.display = 'none';
   }
 
   // Cargar productos y renderizar
