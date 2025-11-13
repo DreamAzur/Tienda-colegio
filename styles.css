@@ -148,7 +148,8 @@ header p {
   max-width: var(--site-max-width);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 340px;
+  /* Mobile-first: por defecto una sola columna; en pantallas más grandes se añade aside */
+  grid-template-columns: 1fr;
   grid-gap: 20px;
 }
 
@@ -240,6 +241,8 @@ h2 {
   .site-nav { position: static !important; max-height: none !important; opacity: 1 !important; box-shadow: none; background: transparent; }
   .site-nav ul { flex-direction: row; gap: 10px; }
   .site-nav a { padding: 8px 12px; border-radius: 10px; }
+  /* Desktop layout: aside appears on the right */
+  .container { grid-template-columns: 1fr 340px; }
 }
 
   /* Header: stack items and show hamburger */

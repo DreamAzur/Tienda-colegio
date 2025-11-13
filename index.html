@@ -34,7 +34,7 @@
     <!-- Banner principal: logo + mensaje de bienvenida -->
     <section class="card banner full-width" role="region" aria-label="Bienvenida">
       <div class="banner-inner">
-        <img src="img/logo.jpeg" alt="Logo GAMMS" class="banner-logo" onerror="this.style.display='none'" />
+  <img src="img/logo.jpeg" alt="Logo GAMMS" class="banner-logo" />
         <div class="banner-text">
           <p>En GAMMS encontrarás el lugar perfecto para descubrir productos únicos, modernos y de excelente calidad. Somos una tienda online comprometida con ofrecerte lo mejor en cada detalle, combinando estilo, comodidad y precios accesibles.</p>
           <p>Aquí podrás comprar de forma segura, rápida y sencilla, con la confianza de que cada artículo ha sido seleccionado especialmente para ti. 💫</p>
@@ -138,6 +138,23 @@
   <!-- Modal carrito (SPA) -->
   <!-- Modal de carrito eliminado: se usa ahora la página dedicada cart.html -->
   <script src="app.js"></script>
+  <script>
+    // Banner logo fallback: si la imagen no carga, sustituir por un SVG placeholder
+    (function(){
+      try {
+        const img = document.querySelector('.banner-logo');
+        if (!img) return;
+        img.addEventListener('error', function(){
+          this.onerror = null;
+          this.src = 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22140%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23fff7fb%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20fill%3D%22%23be185d%22%20font-family%3D%22Poppins,Arial,Helvetica,sans-serif%22%20font-size%3D%2228%22%3EGAMMS%3C/text%3E%3C/svg%3E';
+        });
+        // si ya estaba rota en cache
+        if (img.complete && img.naturalWidth === 0) {
+          img.dispatchEvent(new Event('error'));
+        }
+      } catch(e){ console.warn(e); }
+    })();
+  </script>
     <!-- Inline products data: evita problemas con fetch cuando se abre con file:// -->
     <script id="products-data" type="application/json">
     [
