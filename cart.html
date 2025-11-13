@@ -12,8 +12,9 @@
       <h1>GAMMS</h1>
       <p>Carrito de compras</p>
     </div>
-    <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
-    <nav class="site-nav" aria-label="Navegación principal">
+  <input type="checkbox" id="menu-toggle-cbx" class="menu-toggle-cbx" aria-hidden="true" />
+  <label for="menu-toggle-cbx" id="menu-toggle" class="menu-toggle" role="button" aria-label="Abrir menú" aria-controls="site-nav" aria-expanded="false">☰</label>
+  <nav id="site-nav" class="site-nav" aria-label="Navegación principal">
       <ul>
         <li><a href="index.html">Inicio</a></li>
         <li><a href="conocenos.html">Conócenos</a></li>

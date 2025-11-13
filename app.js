@@ -768,16 +768,26 @@ async function init() {
   const menuToggle = document.getElementById('menu-toggle');
   const siteNav = document.querySelector('.site-nav');
   if (menuToggle && siteNav) {
+    const menuCbx = document.getElementById('menu-toggle-cbx');
     menuToggle.addEventListener('click', () => {
       const opening = !siteNav.classList.contains('open');
       siteNav.classList.toggle('open');
       // accesibilidad
       menuToggle.setAttribute('aria-expanded', String(opening));
+      if (menuCbx) menuCbx.checked = opening;
     });
     // cerrar menú al hacer click en un enlace (mejor UX en mobile)
     siteNav.addEventListener('click', (e) => {
       const a = e.target.closest('a');
       if (a && siteNav.classList.contains('open')) siteNav.classList.remove('open');
+    });
+  }
+  // sincronizar cierre con checkbox si existe
+  if (siteNav) {
+    const menuCbxClose = document.getElementById('menu-toggle-cbx');
+    siteNav.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (a && menuCbxClose) menuCbxClose.checked = false;
     });
   }
   // Fallback: algunos móviles o navegadores ignoran ciertos eventos o el listener no se instaló
@@ -787,12 +797,14 @@ async function init() {
       const sn = document.querySelector('.site-nav');
       if (!mt || !sn) return;
       if (mt.dataset.hasMenuListener) return; // ya enlazado
+      const menuCbx = document.getElementById('menu-toggle-cbx');
       const handler = (e) => {
         // prevenir doble activación en touch devices
         if (e.type === 'touchstart') e.preventDefault();
         const opening = !sn.classList.contains('open');
         sn.classList.toggle('open');
         mt.setAttribute('aria-expanded', String(opening));
+        if (menuCbx) menuCbx.checked = opening;
       };
       ['click', 'pointerdown', 'touchstart'].forEach((ev) => mt.addEventListener(ev, handler, { passive: false }));
       mt.dataset.hasMenuListener = '1';

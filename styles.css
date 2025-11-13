@@ -254,6 +254,8 @@ h2 {
   }
   /* menu button: shown/hidden via media queries; keep it in normal flow by default */
   .menu-toggle { display: block; position: static; transform: none; left: auto; top: auto; font-size: 1.4rem; width:46px; height:46px; }
+  /* hide native checkbox used for CSS-only toggle but keep it accessible */
+  .menu-toggle-cbx { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .menu-toggle:active { transform: scale(0.98); }
 
   /* Nav mobile: desplegable ordenado desde debajo del header (no en el medio) */
@@ -272,6 +274,8 @@ h2 {
     opacity: 0;
     z-index: 40;
   }
+  /* CSS-only fallback: show nav when checkbox is checked */
+  #menu-toggle-cbx:checked ~ .site-nav { max-height: 420px; opacity: 1; }
   .site-nav.open { max-height: 420px; opacity: 1; }
   .site-nav ul { flex-direction: column; gap: 6px; padding: 12px; margin:0; }
   .site-nav a { display: block; padding: 10px 12px; border-radius: 8px; }
