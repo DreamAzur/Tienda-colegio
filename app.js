@@ -896,14 +896,28 @@ async function init() {
   }
 
   // Cargar productos y renderizar
-  await loadProducts();
-  renderProducts();
-  // Renderizar ofertas dinámicas
-  if (typeof renderOffers === 'function') renderOffers();
+  // Cargar productos y renderizar. Envolver en try/catch para que
+  // cualquier error en fetch/parse no detenga la inicialización completa.
+  try {
+    await loadProducts();
+  } catch (e) {
+    console.error('Error en loadProducts():', e);
+  }
 
-  // Construir galería a partir del DOM generado
-  buildGalleryFromProducts();
-  setupLightboxControls();
+  try {
+    console.log('Renderizando catálogo y componentes relacionados...');
+    renderProducts();
+    // Renderizar ofertas dinámicas
+    if (typeof renderOffers === 'function') renderOffers();
+
+    // Construir galería a partir del DOM generado
+    buildGalleryFromProducts();
+    setupLightboxControls();
+  } catch (e) {
+    console.error('Error renderizando productos/ofertas/galería:', e);
+    // Intentar renderizar con el fallback incorporado
+    try { renderProducts(); } catch (e2) { console.error('Fallback renderProducts falló:', e2); }
+  }
   // botón subir arriba
   if (typeof setupBackToTop === 'function') setupBackToTop();
   // Forzar navegación al carrito (fallback): siempre redirige a cart.html al hacer clic
