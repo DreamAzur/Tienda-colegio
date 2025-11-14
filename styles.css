@@ -256,7 +256,7 @@ h2 {
     padding-left: 0;
   }
   /* menu button: shown/hidden via media queries; keep it in normal flow by default */
-  .menu-toggle { display: block; position: static; transform: none; left: auto; top: auto; font-size: 1.4rem; width:46px; height:46px; }
+  .menu-toggle { display: block; position: static; transform: none; left: auto; top: auto; font-size: 1.4rem; width:46px; height:46px; z-index:70; pointer-events:auto; touch-action:manipulation; }
   /* hide native checkbox used for CSS-only toggle but keep it accessible */
   .menu-toggle-cbx { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .menu-toggle:active { transform: scale(0.98); }

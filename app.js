@@ -834,6 +834,36 @@ async function init() {
       if (a && menuCbxClose) menuCbxClose.checked = false;
     });
   }
+  // Asegurar sincronía con el checkbox nativo: cuando cambie, reflejar estado visual y accesible
+  (function syncMenuWithCheckbox(){
+    try {
+      const cbx = document.getElementById('menu-toggle-cbx');
+      if (!cbx) return;
+      cbx.addEventListener('change', () => {
+        const checked = !!cbx.checked;
+        if (siteNav) siteNav.classList.toggle('open', checked);
+        if (menuToggle) menuToggle.setAttribute('aria-expanded', String(checked));
+      });
+      // Si la página se redimensiona, cerrar el menú para evitar estados pegados
+      window.addEventListener('resize', () => {
+        if (cbx && cbx.checked) cbx.checked = false;
+        if (siteNav) siteNav.classList.remove('open');
+        if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+      });
+      // Cerrar cuando se hace click fuera del nav en captura (mejora UX móvil)
+      document.addEventListener('click', (ev) => {
+        try {
+          const target = ev.target;
+          const clickedInside = target.closest && (target.closest('#site-nav') || target.closest('#menu-toggle') || target === cbx);
+          if (!clickedInside) {
+            if (cbx && cbx.checked) cbx.checked = false;
+            if (siteNav) siteNav.classList.remove('open');
+            if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+          }
+        } catch(e){}
+      }, true);
+    } catch(e){}
+  })();
   // Fallback: algunos móviles o navegadores ignoran ciertos eventos o el listener no se instaló
   (function ensureMenuToggle() {
     try {
