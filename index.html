@@ -42,6 +42,118 @@
         </div>
       </div>
     </section>
-    
+    <!-- Catálogo de fotos (miniaturas) -->
+    <section class="card" style="grid-column: 1 / -1;">
+      <h2>Catálogo de fotos</h2>
+      <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:8px;">Haz clic en cualquier miniatura para ver la imagen ampliada. Puedes navegar con las flechas.</p>
+      <div id="catalog-grid" class="catalog-grid"></div>
+    </section>
+    <!-- Productos -->
+    <!-- Ofertas -->
+    <section class="card offers full-width" id="offers-section">
+      <h2>Ofertas</h2>
+      <div id="offers-list" class="offers-list">
+        <!-- Ofertas generadas dinámicamente -->
+      </div>
+    </section>
+
+    <section class="card full-width">
+      <h2>Productos</h2>
+      <div class="product-list" id="product-list">
+        <!-- Productos renderizados dinámicamente desde products.json (o fallback) -->
+      </div>
+    </section>
+    <!-- (Se eliminó la sección de "Productos destacados" para que el catálogo principal muestre todos los productos) -->
+  </main>
+
+  <!-- Mensajes -->
+  <section id="contact" class="card" style="max-width: 1000px; margin: 20px auto 0;">
+    <h2>Déjanos un mensaje</h2>
+    <form id="message-form">
+      <div>
+        <label for="name">Nombre</label>
+        <input id="name" type="text" placeholder="Tu nombre" />
+      </div>
+      <div>
+        <label for="message">Mensaje</label>
+        <textarea id="message" placeholder="Escribe tu mensaje aquí..."></textarea>
+      </div>
+      <button type="submit">Enviar mensaje</button>
+    </form>
+
+    <h3>Mensajes recibidos</h3>
+    <ul id="messages-list" class="messages-list">
+      <li class="message">
+        <div class="msg-head"><strong class="msg-name">María P.</strong><span class="msg-date">2025-11-10 14:23</span></div>
+        <p class="msg-body">¡Me encantaron los productos! Compré una chalina y llegó muy rápido, la calidad es excelente. 🌸</p>
+      </li>
+      <li class="message">
+        <div class="msg-head"><strong class="msg-name">Lucía R.</strong><span class="msg-date">2025-11-09 09:12</span></div>
+        <p class="msg-body">El servicio al cliente me ayudó a elegir el color perfecto. Recomendado 100%.</p>
+      </li>
+      <li class="message">
+        <div class="msg-head"><strong class="msg-name">Carlos G.</strong><span class="msg-date">2025-11-05 18:40</span></div>
+        <p class="msg-body">Muy buena experiencia. Productos artesanales con mucho detalle. Volveré a comprar.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Footer con datos de la empresa -->
+  <footer>
+    <div class="footer-content">
+      <div>
+        <h3>GAMMS</h3>
+        <p>Tienda de tejidos artesanales hechos a mano.</p>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>Teléfono: +51 930 897 942</p>
+          <p>Correo: gammsgreisy@gmail.com</p>
+        <p>Dirección: Cajamarca, Perú</p>
+      </div>
+      <div>
+        <h4>Síguenos</h4>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/gamms_gs/" class="social-icon instagram" title="Instagram - GAMMS" aria-label="Instagram - GAMMS" target="_blank" rel="noopener">📷</a>
+          <a href="#" class="social-icon facebook" title="Facebook">f</a>
+          <a href="#" class="social-icon tiktok" title="TikTok">♬</a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copy">© 2025 GAMMS. Proyecto escolar.</p>
+  </footer>
+
+  <!-- Modal para ver fotos grandes -->
+  <div id="image-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-close" id="modal-close" role="button" aria-label="Cerrar">✕</div>
+      <img id="modal-image" src="" alt="" />
+      <p id="modal-caption" class="modal-caption"></p>
+      <div class="lightbox-controls">
+        <button id="lightbox-prev" aria-label="Anterior">◀</button>
+        <button id="lightbox-next" aria-label="Siguiente">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Banner logo fallback: si la imagen no carga, sustituir por un SVG placeholder
+    (function(){
+      try {
+        const img = document.querySelector('.banner-logo');
+        if (!img) return;
+        img.addEventListener('error', function(){
+          this.onerror = null;
+          this.src = 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22140%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23fff7fb%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20fill%3D%22%23be185d%22%20font-family%3D%22Poppins,Arial,Helvetica,sans-serif%22%20font-size%3D%2228%22%3EGAMMS%3C/text%3E%3C/svg%3E';
+        });
+        // si ya estaba rota en cache
+        if (img.complete && img.naturalWidth === 0) {
+          img.dispatchEvent(new Event('error'));
+        }
+      } catch(e){ /* banner fallback error silenciado */ }
+    })();
+  </script>
 </body>
 </html>
