@@ -74,30 +74,35 @@ const defaultProducts = [
 ];
 
 async function loadProducts() {
-  // Primero, intentar leer datos inline (evita problemas con file:// y CORS)
+  // Intentar cargar desde `products.json` externo primero (cache-bust),
+  // y usar el bloque inline `#products-data` como fallback para entornos
+  // file:// o cuando el fetch falla por CORS/caché.
+  try {
+    const cacheBust = Date.now();
+    const res = await fetch('products.json?v=' + cacheBust, { cache: 'no-store' });
+    if (res && res.ok) {
+      try {
+        const json = await res.json();
+        if (Array.isArray(json) && json.length > 0) { products = json; return; }
+      } catch (e) { /* fallo parseando JSON externo, seguiremos con fallback */ }
+    }
+  } catch (e) {
+    // fallo en fetch (p. ej. file:// o CORS). Caeremos al fallback inline.
+  }
+
+  // Fallback: intentar leer datos inline (evita problemas con file:// y CORS)
   try {
     const el = document.getElementById('products-data');
     if (el) {
       const txt = el.textContent || el.innerText || el.innerHTML;
-      products = JSON.parse(txt);
-      return;
+      const parsed = JSON.parse(txt);
+      if (Array.isArray(parsed) && parsed.length > 0) { products = parsed; return; }
     }
   } catch (e) {
     // fallo al leer products-data inline (silenciado)
   }
 
-  // Si no hay inline, intentar fetch normal
-  try {
-    const res = await fetch('products.json');
-    if (res.ok) {
-      products = await res.json();
-      return;
-    }
-    // fetch products.json devolvió estado no OK
-  } catch (e) {
-    // no se pudo cargar products.json, usando fallback
-  }
-
+  // Si todo falla, usar fallback embebido en el script
   products = defaultProducts;
 }
 
